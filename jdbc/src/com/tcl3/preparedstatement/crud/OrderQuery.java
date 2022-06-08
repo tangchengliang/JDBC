@@ -16,38 +16,46 @@ public class OrderQuery {
         System.out.println(result);
     }
     public Order query(String sql, Object ...args) throws Exception {
-        // 1. 建立连接
-        Connection conn = JDBCUtils.getConnection();
-        // 2.实例化preparedStatement
-        PreparedStatement ps = conn.prepareStatement(sql);
-        // 3.填充定位符
-        for (int i = 0; i < args.length; i++) {
-            ps.setObject(i+1,args[i]);
-        }
-        //4.执行
-        ResultSet rs = ps.executeQuery();
-
-        //5.对结果操作
-        //5.1 获取元数据
-        ResultSetMetaData rsmd = rs.getMetaData();
-        //5.2 得到元数据长度
-        int columnCount = rsmd.getColumnCount();
-        //5.3遍历数据
-        if(rs.next()){
-            Order order = new Order();
-            for (int i = 0; i < columnCount; i++) {
-                // 获取属性名
-                String orderLabel = rsmd.getColumnLabel(i + 1);
-                // 获取列值
-                Object orderValue = rs.getObject(i+1);
-                // 反射
-                Field filed = Order.class.getDeclaredField(orderLabel);
-                filed.setAccessible(true);
-                filed.set(order, orderValue);
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            // 1. 建立连接
+            conn = JDBCUtils.getConnection();
+            // 2.实例化preparedStatement
+            ps = conn.prepareStatement(sql);
+            // 3.填充定位符
+            for (int i = 0; i < args.length; i++) {
+                ps.setObject(i+1,args[i]);
             }
-            return order;
+            //4.执行
+            rs = ps.executeQuery();
+
+            //5.对结果操作
+            //5.1 获取元数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //5.2 得到元数据长度
+            int columnCount = rsmd.getColumnCount();
+            //5.3遍历数据
+            if(rs.next()){
+                Order order = new Order();
+                for (int i = 0; i < columnCount; i++) {
+                    // 获取属性名
+                    String orderLabel = rsmd.getColumnLabel(i + 1);
+                    // 获取列值
+                    Object orderValue = rs.getObject(i+1);
+                    // 反射
+                    Field filed = Order.class.getDeclaredField(orderLabel);
+                    filed.setAccessible(true);
+                    filed.set(order, orderValue);
+                }
+                return order;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            JDBCUtils.closeResource(conn, ps, rs);
         }
-        JDBCUtils.closeResource(conn, ps, rs);
         return null;
     }
 
@@ -78,7 +86,7 @@ public class OrderQuery {
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            JDBCUtils.closeResource(conn,ps,rs);
+            JDBCUtils.closeResource(conn, ps, rs);
         }
     }
 }

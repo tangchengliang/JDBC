@@ -1,0 +1,4 @@
+1.idea里面@Test里面不能使用Scanner。
+    help ->Edit Custom VM Options…
+    弹出的对话框文件中追加   -Deditable.java.test.console=true
+
