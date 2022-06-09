@@ -2,3 +2,12 @@
     help ->Edit Custom VM Options…
     弹出的对话框文件中追加   -Deditable.java.test.console=true
 
+2.Blob 报错too large
+    在mysql的安装目录下，找my.ini文件加上如下的配置参数：
+    max_allowed_packet=16M。
+    同时注意：修改了my.ini文件之后，需要重新启动mysql服务。
+
+3. 批量操作时
+    驱动需要下载8.0以上的，并且修改依赖：
+    url=jdbc:mysql://localhost:3306/test?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    driverClass=com.mysql.cj.jdbc.Driver
