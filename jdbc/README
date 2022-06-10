@@ -11,3 +11,7 @@
     驱动需要下载8.0以上的，并且修改依赖：
     url=jdbc:mysql://localhost:3306/test?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
     driverClass=com.mysql.cj.jdbc.Driver
+
+4.c3p0配置文件连接时
+    将c3p0-config.xml 放到resource下
+    xml文件中  & 要换成 &amp;

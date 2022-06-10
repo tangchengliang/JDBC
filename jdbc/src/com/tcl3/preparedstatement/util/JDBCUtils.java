@@ -1,5 +1,11 @@
 package com.tcl3.preparedstatement.util;
 
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.mchange.v2.c3p0.DataSources;
+import org.apache.commons.dbcp.BasicDataSourceFactory;
+
+import javax.sql.DataSource;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
@@ -76,4 +82,47 @@ public class JDBCUtils {
             throwables.printStackTrace();
         }
     }
+
+    /**
+     *  DBCP建立连接，为防止调用一次建立一个池子，使用静态代码块
+     *
+     */
+    // 先声明一个连接池
+    private static DataSource source;
+    //静态代码块，随着类的运行而加载，追回执行一次
+    static {
+        try {
+            Properties pros = new Properties();
+            InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("dbcp.properties");
+            pros.load(is);
+            // 创建一个dbcp数据连接池
+            source = BasicDataSourceFactory.createDataSource(pros);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static Connection getDbcpConnection() throws SQLException {
+        return source.getConnection();
+    }
+
+    /**
+     *  Druid 连接
+     *
+     */
+    public static DataSource source1;
+    static {
+        try {
+            Properties pros = new Properties();
+            InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("druid.properties");
+
+            pros.load(is);
+            source1 = DruidDataSourceFactory.createDataSource(pros);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static Connection getDruidConnection() throws SQLException {
+        return source1.getConnection();
+    }
+
 }
